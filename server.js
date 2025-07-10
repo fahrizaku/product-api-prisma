@@ -15,19 +15,20 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet());
 
 // CORS configuration
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "development"
-        ? [
-            "http://localhost:8081",
-            "http://localhost:19006",
-            "exp://192.168.1.100:8081",
-          ]
-        : process.env.ALLOWED_ORIGINS?.split(",") || "*",
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow mobile apps (no origin)
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
