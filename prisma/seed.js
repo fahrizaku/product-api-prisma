@@ -12,29 +12,79 @@ async function main() {
   // Insert sample data
   const products = [
     {
-      name: "Laptop ASUS ROG",
-      price: 15000000.0,
-      stock: 5,
+      name: "Stetoskop Littmann Classic III",
+      price: 3500000.0,
+      stock: 25,
     },
     {
-      name: "Mouse Gaming Logitech",
-      price: 850000.0,
+      name: "Tensimeter Digital Omron",
+      price: 1200000.0,
       stock: 15,
     },
     {
-      name: "Keyboard Mechanical",
-      price: 1200000.0,
+      name: "Termometer Infrared",
+      price: 850000.0,
+      stock: 30,
+    },
+    {
+      name: "Nebulizer Portable",
+      price: 2500000.0,
       stock: 8,
     },
     {
-      name: "Monitor 27 inch 4K",
-      price: 4500000.0,
+      name: "Pulse Oximeter",
+      price: 650000.0,
+      stock: 20,
+    },
+    {
+      name: "Sarung Tangan Latex (Box)",
+      price: 120000.0,
+      stock: 100,
+    },
+    {
+      name: "Masker Medis N95 (Box)",
+      price: 350000.0,
+      stock: 50,
+    },
+    {
+      name: "Jarum Suntik 5ml (Pack)",
+      price: 85000.0,
+      stock: 200,
+    },
+    {
+      name: "Infus Set Disposable",
+      price: 15000.0,
+      stock: 150,
+    },
+    {
+      name: "Wheelchair Standard",
+      price: 2800000.0,
+      stock: 12,
+    },
+    {
+      name: "Bed Pan Stainless Steel",
+      price: 450000.0,
+      stock: 25,
+    },
+    {
+      name: "Lampu Operasi LED",
+      price: 45000000.0,
+      stock: 2,
+    },
+    {
+      name: "Defibrillator Portable",
+      price: 85000000.0,
       stock: 3,
     },
     {
-      name: "Headset Gaming",
-      price: 750000.0,
-      stock: 12,
+      name: "Ventilator Medis",
+      price: 250000000.0,
+      stock: 5,
+    },
+    {
+      name: "Monitor Pasien 5 Parameter",
+      price: 35000000.0,
+      stock: 8,
     },
   ];
 
