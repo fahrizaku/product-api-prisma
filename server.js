@@ -16,15 +16,7 @@ app.use(helmet());
 
 // CORS configuration
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow mobile apps (no origin)
-    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "*",
   credentials: true,
 };
 
