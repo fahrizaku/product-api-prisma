@@ -1,5 +1,80 @@
-// controllers/productController.js
+// controllers/productController.js - Clean version for MySQL
 const prisma = require("../lib/prisma");
+
+// Get products with search and pagination - FIXED for MySQL
+const getProductsWithFilter = async (req, res) => {
+  try {
+    const { search, page = 1, limit = 10 } = req.query;
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // MySQL doesn't support mode: "insensitive"
+    // Use contains, startsWith, or endsWith instead
+    const whereClause = search
+      ? {
+          OR: [
+            {
+              name: {
+                contains: search,
+              },
+            },
+            {
+              name: {
+                contains: search.toLowerCase(),
+              },
+            },
+            {
+              name: {
+                contains: search.toUpperCase(),
+              },
+            },
+            {
+              name: {
+                startsWith: search,
+              },
+            },
+          ],
+        }
+      : {};
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where: whereClause,
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: limitNumber,
+      }),
+      prisma.product.count({
+        where: whereClause,
+      }),
+    ]);
+
+    // Convert Decimal to number
+    const productsWithPriceAsNumber = products.map((product) => ({
+      ...product,
+      price: parseFloat(product.price),
+    }));
+
+    const response = {
+      products: productsWithPriceAsNumber,
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber,
+        total,
+        totalPages: Math.ceil(total / limitNumber),
+      },
+    };
+
+    res.json(response);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
+  }
+};
 
 // Get all products
 const getAllProducts = async (req, res) => {
@@ -18,7 +93,6 @@ const getAllProducts = async (req, res) => {
 
     res.json(productsWithPriceAsNumber);
   } catch (error) {
-    console.error("Error fetching products:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -49,7 +123,6 @@ const getProduct = async (req, res) => {
 
     res.json(productWithPriceAsNumber);
   } catch (error) {
-    console.error("Error fetching product:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -94,7 +167,6 @@ const createProduct = async (req, res) => {
 
     res.status(201).json(productWithPriceAsNumber);
   } catch (error) {
-    console.error("Error creating product:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -155,7 +227,6 @@ const updateProduct = async (req, res) => {
 
     res.json(productWithPriceAsNumber);
   } catch (error) {
-    console.error("Error updating product:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -185,59 +256,6 @@ const deleteProduct = async (req, res) => {
 
     res.json({ message: "Product deleted successfully" });
   } catch (error) {
-    console.error("Error deleting product:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-// Get products with search and pagination
-const getProductsWithFilter = async (req, res) => {
-  try {
-    const { search, page = 1, limit = 10 } = req.query;
-    const pageNumber = parseInt(page);
-    const limitNumber = parseInt(limit);
-    const skip = (pageNumber - 1) * limitNumber;
-
-    const whereClause = search
-      ? {
-          name: {
-            contains: search,
-            mode: "insensitive",
-          },
-        }
-      : {};
-
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where: whereClause,
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip,
-        take: limitNumber,
-      }),
-      prisma.product.count({
-        where: whereClause,
-      }),
-    ]);
-
-    // Convert Decimal to number
-    const productsWithPriceAsNumber = products.map((product) => ({
-      ...product,
-      price: parseFloat(product.price),
-    }));
-
-    res.json({
-      products: productsWithPriceAsNumber,
-      pagination: {
-        page: pageNumber,
-        limit: limitNumber,
-        total,
-        totalPages: Math.ceil(total / limitNumber),
-      },
-    });
-  } catch (error) {
-    console.error("Error fetching products with filter:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
