@@ -4,6 +4,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const dotenv = require("dotenv");
 const productRoutes = require("./routes/products");
+const authRoutes = require("./routes/auth");
 const errorHandler = require("./middleware/errorHandler");
 
 dotenv.config();
@@ -34,6 +35,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Routes
+app.use("/api/auth", authRoutes);
+
 app.use("/api/products", productRoutes);
 
 // Health check
